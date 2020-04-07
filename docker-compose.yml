@@ -1,0 +1,44 @@
+version: "3.2"
+services:
+  rabbitmq-server:
+      image: rabbitmq
+      hostname: "rabbitmq-server"
+      # environment:
+      #     RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      #     RABBITMQ_DEFAULT_USER: "guest"
+      #     RABBITMQ_DEFAULT_PASS: "guest"
+      #     RABBITMQ_DEFAULT_VHOST: "/"
+      ports:
+          - "15672:15672"
+          # - "5672:5672"
+
+  iss-service:
+    build: ./iss-service
+    depends_on:
+        - rabbitmq-server
+    ports:
+        - "8081:8081"
+
+  subscription-service:
+    build: ./subscription-service
+    depends_on:
+        - rabbitmq-server
+        - mongo
+    ports:
+        - "8082:8082" 
+    environment:
+      - MONGO_DB_URI=mongodb://mongo:27017/subscription-service    
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - "./mongo/db:/data/db"
+
+  notification-service:
+    build: ./notification-service
+    depends_on:
+        - rabbitmq-server
+    ports:
+        - "8083:8083"
