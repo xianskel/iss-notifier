@@ -1,0 +1,25 @@
+{
+  "name": "iss-service",
+  "version": "0.1.0",
+  "description": "Microservice to retrieve ISS path info",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -r esm index.js",
+    "start": "node -r esm index.js"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "author": "Cian Skelly <>",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.4",
+    "axios": "^0.19.2",
+    "grpc": "^1.24.2",
+    "google-protobuf": "^3.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2",
+    "esm": "^3.2.25"
+  }
+}
