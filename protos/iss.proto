@@ -1,0 +1,15 @@
+syntax = "proto3";
+package iss;
+
+service ISSInfo{
+    rpc getLocationData (Location) returns (PassInfo) {}
+}
+
+message Location {
+    int32 latitude = 1;
+    int32 longitude = 2;
+}
+
+message PassInfo {
+    string date = 1;
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+package subscription;
+
+service SubscriptionService{
+    rpc createSubscription (SubInfo) returns (Response) {}
+    rpc deleteSubscription (DeleteRequest) returns (Response);
+}
+
+message SubInfo {
+    int32 latitude = 1;
+    int32 longitude = 2;
+    string email = 3;
+    Schedule schedule = 4;
+}
+
+message DeleteRequest {
+    string email = 3;
+}
+
+message Response {
+    bool success = 1;
+}
+
+enum Schedule {
+    HOURLY = 1;
+    DAILY = 2;
+    WEEKLY = 3;
+}
