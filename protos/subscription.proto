@@ -7,8 +7,8 @@ service SubscriptionService{
 }
 
 message SubInfo {
-    int32 latitude = 1;
-    int32 longitude = 2;
+    int32 lat = 1;
+    int32 lon = 2;
     string email = 3;
     Schedule schedule = 4;
 }

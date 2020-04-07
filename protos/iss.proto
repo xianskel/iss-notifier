@@ -2,14 +2,19 @@ syntax = "proto3";
 package iss;
 
 service ISSInfo{
-    rpc getLocationData (Location) returns (PassInfo) {}
+    rpc getLocationData (Location) returns (PassInfoResponse) {}
 }
 
 message Location {
-    int32 latitude = 1;
-    int32 longitude = 2;
+    string lat = 1;
+    string lon = 2;
+}
+
+message PassInfoResponse {
+    repeated PassInfo passes = 1;
 }
 
 message PassInfo {
-    string date = 1;
+    string duration = 1;
+    string risetime = 2;
 }
