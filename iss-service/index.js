@@ -1,8 +1,8 @@
-import config from "./config";
+import { config } from "./config";
 import grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
-import getLocationData from "./src/controller";
+import { getLocationData } from "./src/controller";
 
 const protoPath = path.join(__dirname, "..", "protos", "iss.proto");
 

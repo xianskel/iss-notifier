@@ -1,3 +1,5 @@
+import ISSApi from "./iss-api";
+
 export const getLocationData = (call, callback) => {
   const location = call.request;
   console.log(location);
@@ -6,5 +8,12 @@ export const getLocationData = (call, callback) => {
     return callback(new Error("You must provide a location."));
   }
 
-  callback(null, { date: "gfsgkasd" });
+  new ISSApi()
+    .fetch(location)
+    .then(res => {
+      callback(null, { passes: res.data.response });
+    })
+    .catch(err => {
+      callback("An error occured", null);
+    });
 };
