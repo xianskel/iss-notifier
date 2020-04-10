@@ -14,9 +14,10 @@
   "author": "Cian Skelly <>",
   "dependencies": {
     "@grpc/proto-loader": "^0.5.4",
+    "amqplib-plus": "^1.0.3",
     "axios": "^0.19.2",
-    "grpc": "^1.24.2",
-    "google-protobuf": "^3.6.1"
+    "google-protobuf": "^3.6.1",
+    "grpc": "^1.24.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.2",

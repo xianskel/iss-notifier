@@ -1,4 +1,4 @@
-import ISSApi from "./iss-api";
+import ISSApi from "../rest/iss-api";
 
 export const getLocationData = (call, callback) => {
   const location = call.request;
