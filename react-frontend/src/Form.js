@@ -3,13 +3,14 @@ import { geolocated } from "react-geolocated";
 import formatcoords from "formatcoords";
 import PathInfo from "./PathInfo";
 import { Input, Button, Icon } from "semantic-ui-react";
+import * as EmailValidator from "email-validator";
 
 class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: null,
-      successMessage: null,
+      errorMessage: "",
+      successMessage: "",
       isSubscribing: false,
       isDeleting: false,
       email: null
@@ -23,6 +24,8 @@ class Form extends React.Component {
       <div>Geolocation is disabled on your browser</div>
     ) : this.props.coords ? (
       <div>
+        <div className="error">{this.state.errorMessage}</div>
+        <div className="success">{this.state.successMessage}</div>
         <Input
           type="email"
           fluid
@@ -72,8 +75,12 @@ class Form extends React.Component {
   };
 
   createSubscription = () => {
-    if (!this.state.email) {
-      this.setState({ ...this.state, error: "Invalid email" });
+    if (!EmailValidator.validate(this.state.email)) {
+      this.setState({
+        ...this.state,
+        errorMessage: "Invalid email!",
+        successMessage: ""
+      });
       return;
     }
     this.setState({ ...this.state, isSubscribing: true });
@@ -90,24 +97,28 @@ class Form extends React.Component {
       .then(res => {
         this.setState({
           ...this.state,
-          successMessage: "Successfully subscribed to email notifications",
-          error: false,
+          successMessage: "Successfully subscribed to email notifications!",
+          errorMessage: "",
           isSubscribing: false
         });
       })
       .catch(err => {
         this.setState({
           ...this.state,
-          successMessage: null,
-          error: "Could not create subscription",
+          successMessage: "",
+          errorMessage: "Could not create subscription!",
           isSubscribing: false
         });
       });
   };
 
   deleteSubscription = () => {
-    if (!this.state.email) {
-      this.setState({ ...this.state, error: "Invalid email" });
+    if (!EmailValidator.validate(this.state.email)) {
+      this.setState({
+        ...this.state,
+        errorMessage: "Invalid email!",
+        successMessage: ""
+      });
       return;
     }
     this.setState({ ...this.state, isDeleting: true });
@@ -124,16 +135,16 @@ class Form extends React.Component {
       .then(res => {
         this.setState({
           ...this.state,
-          successMessage: "Success removed email subscription",
-          error: false,
+          successMessage: "Success removed email subscription!",
+          errorMessage: "",
           isDeleting: false
         });
       })
       .catch(err => {
         this.setState({
           ...this.state,
-          successMessage: null,
-          error: "Could not remove subscription",
+          successMessage: "",
+          errorMessage: "Could not remove subscription!",
           isDeleting: false
         });
       });

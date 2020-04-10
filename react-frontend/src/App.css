@@ -3,7 +3,7 @@
 }
 
 .App-header {
-  background-color: #929eb9;
+  background-color: #a9b7d6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -25,6 +25,16 @@
 
 .passes {
   font-size: 16px;
+}
+
+.success {
+  color: #006f6f;
+  font-size: 18px;
+}
+
+.error {
+  color: darkred;
+  font-size: 18px;
 }
 
 .App-link {
