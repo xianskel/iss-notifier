@@ -12,6 +12,7 @@ const service = new issPackageDefinition.ISSInfo(
 );
 
 export const getLocationData = (req, res) => {
+  console.log(req);
   const { lat, lon } = req.query;
   if (!lat || !lon) {
     throw new Error("Missing required query parameters");

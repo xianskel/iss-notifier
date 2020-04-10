@@ -1,0 +1,32 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #929eb9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+}
+
+.logo {
+  max-height: 300px;
+}
+
+.input {
+  margin: 20px;
+}
+
+.passes {
+  font-size: 16px;
+}
+
+.App-link {
+  color: #61dafb;
+}
