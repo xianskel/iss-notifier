@@ -7,10 +7,9 @@ service SubscriptionService{
 }
 
 message SubInfo {
-    int32 lat = 1;
-    int32 lon = 2;
+    string lat = 1;
+    string lon = 2;
     string email = 3;
-    Schedule schedule = 4;
 }
 
 message DeleteRequest {
@@ -19,10 +18,4 @@ message DeleteRequest {
 
 message Response {
     bool success = 1;
-}
-
-enum Schedule {
-    HOURLY = 1;
-    DAILY = 2;
-    WEEKLY = 3;
 }

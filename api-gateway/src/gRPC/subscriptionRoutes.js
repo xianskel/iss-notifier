@@ -18,18 +18,23 @@ const client = new packageDefinition.SubscriptionService(
 );
 
 export const createSubscription = (req, res) => {
-  client.createSubscription(
-    { latitude: 1, longitude: 2, email: "test", schedule: 1 },
-    (err, result) => {
+  client.createSubscription(req.body, (err, result) => {
+    if (err) {
+      res.status(500).json("An error occured!");
+    } else {
       console.log(result);
       res.json(result);
     }
-  );
+  });
 };
 
 export const deleteSubscription = (req, res) => {
-  client.deleteSubscription({ email: "test" }, (err, result) => {
-    console.log(result);
-    res.json(result);
+  client.deleteSubscription(req.body, (err, result) => {
+    if (err) {
+      res.status(500).json("An error occured!");
+    } else {
+      console.log(result);
+      res.json(result);
+    }
   });
 };
