@@ -1,13 +1,14 @@
 import grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
+import { config } from "../../config";
 
-const protoPath = path.join(__dirname, "../../..", "protos", "iss.proto");
+const protoPath = path.join(__dirname, "../..", "protos", "iss.proto");
 
 const issProtoDefinition = protoLoader.loadSync(protoPath);
 const issPackageDefinition = grpc.loadPackageDefinition(issProtoDefinition).iss;
 const service = new issPackageDefinition.ISSInfo(
-  "localhost:8081",
+  `${config.services.iss.hostname}:${config.services.iss.port}`,
   grpc.credentials.createInsecure()
 );
 

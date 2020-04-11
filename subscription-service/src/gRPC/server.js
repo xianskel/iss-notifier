@@ -6,7 +6,7 @@ import { createSubscription, deleteSubscription } from "./controller";
 
 const protoPath = path.join(
   __dirname,
-  "../../..",
+  "../../",
   "protos",
   "subscription.proto"
 );
@@ -26,7 +26,7 @@ export class gRPCServer {
       deleteSubscription: deleteSubscription
     });
     this.server.bind(
-      `localhost:${config.server.port}`,
+      `${config.server.host}:${config.server.port}`,
       grpc.ServerCredentials.createInsecure()
     );
     this.server.start();

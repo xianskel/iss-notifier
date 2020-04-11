@@ -5,23 +5,26 @@ import { NotificationConsumer } from "./notification-consumer";
 export class AMQPConnection {
   constructor() {
     this.connection = new amqp.Connection(config.amqp);
-    this.QUEUE = "notification-queue";
   }
   async runNotificationConsumer() {
     try {
       await this.connection.connect();
       const prepareConsumer = async ch => {
-        await ch.assertQueue(this.QUEUE, { durable: false });
+        await ch.assertQueue(config.queues.notification, { durable: false });
         await ch.prefetch(5);
       };
       const customConsumer = new NotificationConsumer(
         this.connection,
         prepareConsumer
       );
-      customConsumer.consume(this.QUEUE, {});
-      console.log("Notification service is listening to: " + this.QUEUE);
+      customConsumer.consume(config.queues.notification, {});
+      console.log(
+        "Notification service is listening to: " + config.queues.notification
+      );
     } catch (e) {
-      console.error("An error occured consuming: " + this.QUEUE + "\n" + e);
+      console.error(
+        "An error occured consuming: " + config.queues.notification + "\n" + e
+      );
     }
   }
 }

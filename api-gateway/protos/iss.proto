@@ -1,0 +1,20 @@
+syntax = "proto3";
+package iss;
+
+service ISSInfo{
+    rpc getLocationData (Location) returns (PassInfoResponse) {}
+}
+
+message Location {
+    string lat = 1;
+    string lon = 2;
+}
+
+message PassInfoResponse {
+    repeated PassInfo passes = 1;
+}
+
+message PassInfo {
+    string duration = 1;
+    string risetime = 2;
+}

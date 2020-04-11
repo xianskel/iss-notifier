@@ -1,19 +1,15 @@
 import grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
+import { config } from "../../config";
 
-const protoPath = path.join(
-  __dirname,
-  "../../..",
-  "protos",
-  "subscription.proto"
-);
+const protoPath = path.join(__dirname, "../..", "protos", "subscription.proto");
 
 const protoDefinition = protoLoader.loadSync(protoPath);
 const packageDefinition = grpc.loadPackageDefinition(protoDefinition)
   .subscription;
 const client = new packageDefinition.SubscriptionService(
-  "localhost:8082",
+  `${config.services.subscription.hostname}:${config.services.subscription.port}`,
   grpc.credentials.createInsecure()
 );
 

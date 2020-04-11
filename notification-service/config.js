@@ -15,6 +15,9 @@ export const config = {
     vhost: "/",
     heartbeat: 60
   },
+  queues: {
+    notification: "notification-queue"
+  },
   server: {
     port: process.env.PORT || 8083
   }

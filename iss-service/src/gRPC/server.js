@@ -4,7 +4,7 @@ import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
 import { getLocationData } from "./controller";
 
-const protoPath = path.join(__dirname, "../../..", "protos", "iss.proto");
+const protoPath = path.join(__dirname, "../..", "protos", "iss.proto");
 
 export class gRPCServer {
   constructor() {
@@ -20,7 +20,7 @@ export class gRPCServer {
       getLocationData: getLocationData
     });
     this.server.bind(
-      `localhost:${config.server.port}`,
+      `${config.server.hostname}:${config.server.port}`,
       grpc.ServerCredentials.createInsecure()
     );
     this.server.start();

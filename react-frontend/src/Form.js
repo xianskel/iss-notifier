@@ -95,6 +95,7 @@ class Form extends React.Component {
     };
     fetch("http://localhost:8080/subscription", requestOptions)
       .then(res => {
+        if (res.status > 300) throw "Error";
         this.setState({
           ...this.state,
           successMessage: "Successfully subscribed to email notifications!",
@@ -126,13 +127,12 @@ class Form extends React.Component {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: this.state.email,
-        lat: this.props.coords.latitude,
-        lon: this.props.coords.longitude
+        email: this.state.email
       })
     };
     fetch("http://localhost:8080/subscription", requestOptions)
       .then(res => {
+        if (res.status > 300) throw "Error";
         this.setState({
           ...this.state,
           successMessage: "Success removed email subscription!",

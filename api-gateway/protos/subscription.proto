@@ -1,0 +1,21 @@
+syntax = "proto3";
+package subscription;
+
+service SubscriptionService{
+    rpc createSubscription (SubInfo) returns (Response) {}
+    rpc deleteSubscription (DeleteRequest) returns (Response);
+}
+
+message SubInfo {
+    string lat = 1;
+    string lon = 2;
+    string email = 3;
+}
+
+message DeleteRequest {
+    string email = 3;
+}
+
+message Response {
+    bool success = 1;
+}
