@@ -24,7 +24,7 @@ app.use(logger.logRequestError);
 app.use("/", router);
 
 app.listen(config.server.port, () => {
-  logger.info(`Magic happens on port ${config.server.port}`);
+  logger.info(`API-Gateway is running on port ${config.server.port}`);
 });
 
 module.exports = app;

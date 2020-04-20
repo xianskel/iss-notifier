@@ -15,7 +15,12 @@ const client = new packageDefinition.SubscriptionService(
 );
 
 export const createSubscription = (req, res) => {
-  client.createSubscription(req.body, (err, result) => {
+  const correlationId = req.headers["X-Correlation-ID"];
+  let metadata = new grpc.Metadata();
+  metadata.add("correlationId", correlationId);
+  service.metadata = metadata;
+
+  client.createSubscription({ ...req.body }, metadata, (err, result) => {
     if (err) {
       logger.error("Error occured creating subscription: " + err.message, {
         correlationId: req.headers["X-Correlation-ID"],
@@ -32,7 +37,12 @@ export const createSubscription = (req, res) => {
 };
 
 export const deleteSubscription = (req, res) => {
-  client.deleteSubscription(req.body, (err, result) => {
+  const correlationId = req.headers["X-Correlation-ID"];
+  let metadata = new grpc.Metadata();
+  metadata.add("correlationId", correlationId);
+  service.metadata = metadata;
+
+  client.deleteSubscription(req.body, metadata, (err, result) => {
     if (err) {
       logger.error("Error occured deleting subscription: " + err.message, {
         correlationId: req.headers["X-Correlation-ID"],

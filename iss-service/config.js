@@ -2,6 +2,7 @@ export const config = {
   environment: process.env.NODE_ENV || "dev",
   server: {
     port: process.env.PORT || 8081,
+    host: process.env.HOST || "localhost",
   },
   amqp: {
     host: process.env.AMQP_HOST || "localhost",

@@ -18,14 +18,14 @@ export class gRPCServer {
 
   start = () => {
     this.server.addService(this.packageDefintion.ISSInfo.service, {
-      getLocationData: getLocationData
+      getLocationData: getLocationData,
     });
     this.server.bind(
-      `:${config.server.port}`,
+      `${config.server.host}:${config.server.port}`,
       grpc.ServerCredentials.createInsecure()
     );
     this.server.start();
 
-    logger.info("Server running on port: " + config.server.port);
+    logger.info("ISS Service is running on port: " + config.server.port);
   };
 }

@@ -32,6 +32,6 @@ export class gRPCServer {
     );
     this.server.start();
 
-    logger.info("Server running on port " + config.server.port);
+    logger.info("Subscription Service is running on port " + config.server.port);
   };
 }
