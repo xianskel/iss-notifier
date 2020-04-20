@@ -1,5 +1,6 @@
 import amqp from "amqplib-plus";
 import { sendMail } from "../email-service";
+import logger from "../logger";
 
 export class NotificationConsumer extends amqp.Consumer {
   constructor(conn, prepareFn) {
@@ -7,7 +8,7 @@ export class NotificationConsumer extends amqp.Consumer {
   }
 
   processMessage(msg, channel) {
-    console.log("Message body:", msg.content.toString());
+    logger.info("Message recived:", msg.content.toString());
 
     const content = JSON.parse(msg.content);
 
@@ -15,7 +16,7 @@ export class NotificationConsumer extends amqp.Consumer {
     if (content && content.email && content.data) {
       sendMail(content);
     } else {
-      console.log("Message failed validation");
+      logger.error("Message failed validation: " + message);
     }
     channel.ack(msg);
   }

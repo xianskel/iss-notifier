@@ -1,6 +1,7 @@
 import amqp from "amqplib-plus";
 import { config } from "../../config";
 import { SubscriptionConsumer } from "./subscription-consumer";
+import logger from "../logger";
 
 export class AMQPConnection {
   publisher;
@@ -12,9 +13,9 @@ export class AMQPConnection {
   async startConsumer(service) {
     try {
       await this.connection.connect();
-      const prepareConsumer = async ch => {
+      const prepareConsumer = async (ch) => {
         await ch.assertQueue(config.queues.consumer, {
-          durable: false
+          durable: false,
         });
         await ch.prefetch(5);
       };
@@ -24,11 +25,11 @@ export class AMQPConnection {
         prepareConsumer
       );
       customConsumer.consume(config.queues.consumer, {});
-      console.log(
+      logger.info(
         "Subscription service is listening to: " + config.queues.consumer
       );
     } catch (e) {
-      console.error(
+      logger.error(
         "An error occured consuming: " + config.queues.consumer + "\n" + e
       );
     }
@@ -36,18 +37,18 @@ export class AMQPConnection {
 
   async createPublisher() {
     await this.connection.connect();
-    const preparePublisher = async ch => {
+    const preparePublisher = async (ch) => {
       await ch.assertQueue(config.queues.publish, { durable: false });
-      console.log("Publisher ready for " + config.queues.publish);
+      logger.info("Publisher ready for " + config.queues.publish);
     };
     this.publisher = new amqp.Publisher(this.connection, preparePublisher);
   }
 
   async publish(message) {
-    console.log("Now:" + this.publisher);
     if (!this.publisher) {
       await createPublisher();
     }
+    logger.info("Publishing message:" + message);
     await this.publisher.sendToQueue(
       config.queues.publish,
       new Buffer.from(JSON.stringify(message)),

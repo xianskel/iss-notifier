@@ -2,6 +2,7 @@ import grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
 import { config } from "../../config";
+import logger from "../logger";
 
 const protoPath = path.join(__dirname, "../..", "protos", "iss.proto");
 
@@ -13,12 +14,26 @@ const service = new issPackageDefinition.ISSInfo(
 );
 
 export const getLocationData = (req, res) => {
-  console.log(req);
   const { lat, lon } = req.query;
   if (!lat || !lon) {
     throw new Error("Missing required query parameters");
   }
-  service.getLocationData({ lat, lon }, (err, result) => {
-    res.json(result);
+  const correlationId = req.headers["X-Correlation-ID"];
+  let metadata = new grpc.Metadata();
+  metadata.add("X-Correlation-ID", correlationId);
+
+  service.getLocationData({ lat, lon }, metadata, (err, result) => {
+    if (err) {
+      logger.error("Error occured fetching location data: " + err.message, {
+        correlationId,
+        status: err.status,
+      });
+      res.status(500).json("An error occured!");
+    } else {
+      logger.info("Succesfully retrieved location data", {
+        correlationId,
+      });
+      res.json(result);
+    }
   });
 };

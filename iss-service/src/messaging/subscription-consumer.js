@@ -1,4 +1,5 @@
 import amqp from "amqplib-plus";
+import logger from "../logger";
 
 export class SubscriptionConsumer extends amqp.Consumer {
   constructor(service, conn, prepareFn) {
@@ -7,14 +8,14 @@ export class SubscriptionConsumer extends amqp.Consumer {
   }
 
   processMessage(msg, channel) {
-    console.log("Message body:", msg.content.toString());
+    logger.info("Recieved message:", msg.content.toString());
 
     const content = JSON.parse(msg.content);
     //Validation logic
     if (content && content.email && content.lat && content.lon) {
       this.service.handleMessage(content);
     } else {
-      console.log("Message failed validation");
+      logger.error("Message failed validation");
     }
     channel.ack(msg);
   }

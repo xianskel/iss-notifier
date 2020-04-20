@@ -3,6 +3,7 @@ import grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
 import { createSubscription, deleteSubscription } from "./controller";
+import logger from "../logger";
 
 const protoPath = path.join(
   __dirname,
@@ -23,7 +24,7 @@ export class gRPCServer {
   start = () => {
     this.server.addService(this.packageDefintion.SubscriptionService.service, {
       createSubscription: createSubscription,
-      deleteSubscription: deleteSubscription
+      deleteSubscription: deleteSubscription,
     });
     this.server.bind(
       `${config.server.host}:${config.server.port}`,
@@ -31,6 +32,6 @@ export class gRPCServer {
     );
     this.server.start();
 
-    console.log("Server running on port " + config.server.port);
+    logger.info("Server running on port " + config.server.port);
   };
 }

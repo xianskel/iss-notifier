@@ -3,6 +3,7 @@ import grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
 import { getLocationData } from "./controller";
+import logger from "../logger";
 
 const protoPath = path.join(__dirname, "../..", "protos", "iss.proto");
 
@@ -20,11 +21,11 @@ export class gRPCServer {
       getLocationData: getLocationData
     });
     this.server.bind(
-      `${config.server.hostname}:${config.server.port}`,
+      `:${config.server.port}`,
       grpc.ServerCredentials.createInsecure()
     );
     this.server.start();
 
-    console.log("Server running on port " + config.server.port);
+    logger.info("Server running on port: " + config.server.port);
   };
 }

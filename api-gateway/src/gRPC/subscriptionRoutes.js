@@ -2,6 +2,7 @@ import grpc from "grpc";
 import * as protoLoader from "@grpc/proto-loader";
 import path from "path";
 import { config } from "../../config";
+import logger from "../logger";
 
 const protoPath = path.join(__dirname, "../..", "protos", "subscription.proto");
 
@@ -16,9 +17,15 @@ const client = new packageDefinition.SubscriptionService(
 export const createSubscription = (req, res) => {
   client.createSubscription(req.body, (err, result) => {
     if (err) {
+      logger.error("Error occured creating subscription: " + err.message, {
+        correlationId: req.headers["X-Correlation-ID"],
+        status: err.status,
+      });
       res.status(500).json("An error occured!");
     } else {
-      console.log(result);
+      logger.info("Succesfully retrieved subscription", {
+        correlationId: req.headers["X-Correlation-ID"],
+      });
       res.json(result);
     }
   });
@@ -27,9 +34,15 @@ export const createSubscription = (req, res) => {
 export const deleteSubscription = (req, res) => {
   client.deleteSubscription(req.body, (err, result) => {
     if (err) {
+      logger.error("Error occured deleting subscription: " + err.message, {
+        correlationId: req.headers["X-Correlation-ID"],
+        status: res.status,
+      });
       res.status(500).json("An error occured!");
     } else {
-      console.log(result);
+      logger.info("Succesfully deleted subscription", {
+        correlationId: req.headers["X-Correlation-ID"],
+      });
       res.json(result);
     }
   });

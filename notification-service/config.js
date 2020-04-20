@@ -4,21 +4,24 @@ export const config = {
     service: "gmail",
     auth: {
       user: "iss.notifier@gmail.com",
-      pass: "pass55635688836"
-    }
+      pass: "pass55635688836",
+    },
   },
   amqp: {
-    host: "localhost",
-    port: 5672,
+    host: process.env.AMQP_HOST || "localhost",
+    port: process.env.AMQP_PORT || 5672,
     user: "guest",
     pass: "guest",
     vhost: "/",
-    heartbeat: 60
+    heartbeat: 60,
   },
   queues: {
-    notification: "notification-queue"
+    notification: "notification-queue",
   },
-  server: {
-    port: process.env.PORT || 8083
-  }
+  logs: {
+    level: "info",
+    handleExceptions: true,
+    json: false,
+    colorize: true,
+  },
 };

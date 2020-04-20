@@ -1,5 +1,5 @@
 import ISSApi from "../rest/iss-api";
-import { AMQPConnection } from "../messaging/amqp-connection";
+import logger from "../logger";
 
 export class SubscriptionService {
   constructor(amqpConnection) {
@@ -9,12 +9,11 @@ export class SubscriptionService {
     try {
       const info = await new ISSApi().fetch({
         lat: message.lat,
-        lon: message.lon
+        lon: message.lon,
       });
-      console.log("Info: " + info);
       this.amqpConnection.publish({ email: message.email, data: "info" });
     } catch (e) {
-      console.error("An error occured fetching ISS info: " + e);
+      logger.error("An error occured fetching ISS info: " + e);
     }
   }
 }

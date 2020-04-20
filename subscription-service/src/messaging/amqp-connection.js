@@ -1,5 +1,6 @@
 import amqp from "amqplib-plus";
 import { config } from "../../config";
+import logger from "../logger";
 
 export class AMQPConnection {
   publisher;
@@ -10,9 +11,9 @@ export class AMQPConnection {
 
   async createPublisher() {
     await this.connection.connect();
-    const preparePublisher = async ch => {
+    const preparePublisher = async (ch) => {
       await ch.assertQueue(config.queues.subscription, { durable: false });
-      console.log("Publisher ready for " + config.queues.subscription);
+      logger.info("Publisher ready for " + config.queues.subscription);
     };
     this.publisher = new amqp.Publisher(this.connection, preparePublisher);
   }
@@ -26,7 +27,7 @@ export class AMQPConnection {
       new Buffer.from(JSON.stringify(message)),
       {}
     );
-    console.log(
+    logger.info(
       "Message published to " + config.queues.subscription + "\n" + message
     );
   }
