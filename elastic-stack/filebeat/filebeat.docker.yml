@@ -1,0 +1,16 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      labels.dedot: true
+      templates:
+        - condition:
+            contains:
+              container.labels.collect_logs_with_filebeat: "true"
+          config:
+           - type: docker
+             containers.ids:
+               - "${data.docker.container.id}"
+output.logstash:
+  hosts: "logstash:5044"
+
+logging.metrics.enabled: false
