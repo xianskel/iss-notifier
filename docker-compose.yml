@@ -15,7 +15,7 @@ services:
         - ISS_HOST=iss-service
         - SUB_HOST=subscription-service
     labels:
-      collect_logs_with_filebeat: "true"
+      collect_logs: "true"
 
   iss-service:
     build: ./iss-service
@@ -27,7 +27,7 @@ services:
         - AMQP_HOST=rabbitmq-server
         - HOST=iss-service
     labels:
-      collect_logs_with_filebeat: "true"
+      collect_logs: "true"
       
   subscription-service:
     build: ./subscription-service
@@ -42,7 +42,7 @@ services:
       - SCHEDULE='* /5 * * *'
       - HOST=subscription-service
     labels:
-      collect_logs_with_filebeat: "true"
+      collect_logs: "true"
 
   mongo:
     image: mongo
@@ -60,7 +60,7 @@ services:
     environment:
         - AMQP_HOST=rabbitmq-server
     labels:
-      collect_logs_with_filebeat: "true"
+      collect_logs: "true"
 
   front-end:
     build: ./react-frontend
@@ -78,7 +78,7 @@ services:
       - cluster.initial_master_nodes=elasticsearch
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
       - logger.level=info
     ulimits:
       memlock:
@@ -103,8 +103,9 @@ services:
      container_name: logstash
      build: ./elastic-stack/logstash
      volumes:
-       - ./elastic-stack/logstash/config.yml:/usr/share/logstash/config/logstash.yml
        - ./elastic-stack/logstash/pipeline:/usr/share/logstash/pipeline
+     environment:
+        - "path.config=/usr/share/logstash/pipeline"
      ports:
        - "5044:5044"
      depends_on:
