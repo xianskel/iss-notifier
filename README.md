@@ -10,7 +10,7 @@ An application which notifies users of the next viewings of the International Sp
 
 #### Frontend
 
-A simple react frontend to demonstrate the API. It allows users to subscribe/unsubscribe from notification emails. These emails will tell users the next five times the ISS is visible from their location. Requires geo-location to be enabled in the users browser.
+A simple react frontend to demonstrate the API. It allows users to subscribe/unsubscribe from notification emails. These emails will be sent on a predefined schedule and will notify users of the next five times the ISS is visible from their location. Requires geo-location to be enabled in the users browser.
 
 ![](images/frontend-1.png)
 
@@ -65,9 +65,9 @@ This can be started with:
 
 `docker-compose up`
 
-or rebuild containers:
+with rebuilt containers:
 
-`docker-compose build`
+`docker-compose up --build`
 
 This will launch all services as well as other dependencies. These include:
 
