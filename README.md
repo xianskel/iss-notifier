@@ -10,7 +10,7 @@ An application which notifies users of the next viewings of the International Sp
 
 #### Frontend
 
-A simple react frontend to demonstract the API. It allows users to subscribe/unsubscribe from notification emails. Requires geo-location to be enabled in the browser.
+A simple react frontend to demonstrate the API. It allows users to subscribe/unsubscribe from notification emails. These emails will tell users the next five times the ISS is visible from their location. Requires geo-location to be enabled in the users browser.
 
 ![](images/frontend-1.png)
 
