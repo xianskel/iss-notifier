@@ -4,7 +4,7 @@ An application which notifies users of the next viewings of the International Sp
 
 ## Architecture
 
-![alt text](./images/iss-architecture.jpg "Architecure Diagram")
+![alt text](images/iss-architecture.jpg "Architecure Diagram")
 
 ## Services
 
