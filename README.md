@@ -12,11 +12,11 @@ An application which notifies users of the next viewings of the International Sp
 
 A simple react frontend to demonstract the API. It allows users to subscribe/unsubscribe from notification emails. Requires geo-location to be enabled in the browser.
 
-![alt text](./images/frontend-1.png "Frontend")
+![alt text](images/frontend-1.png "Frontend")
 
 Also displays viewing information directly in the website.
 
-![alt text](./images/frontend-2.png "Frontend")
+![alt text](images/frontend-2.png "Frontend")
 
 Is accessible on http://localhost:3000
 
