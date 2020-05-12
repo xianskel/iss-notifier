@@ -4,6 +4,7 @@ items:
   kind: Service
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -17,6 +18,25 @@ items:
       targetPort: 8080
     selector:
       io.kompose.service: api-gateway
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: elasticsearch
+    name: elasticsearch
+  spec:
+    ports:
+    - name: "9200"
+      port: 9200
+      targetPort: 9200
+    selector:
+      io.kompose.service: elasticsearch
   status:
     loadBalancer: {}
 - apiVersion: v1
@@ -42,6 +62,7 @@ items:
   kind: Service
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -55,6 +76,44 @@ items:
       targetPort: 8081
     selector:
       io.kompose.service: iss-service
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: kibana
+    name: kibana
+  spec:
+    ports:
+    - name: "5601"
+      port: 5601
+      targetPort: 5601
+    selector:
+      io.kompose.service: kibana
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: logstash
+    name: logstash
+  spec:
+    ports:
+    - name: "5044"
+      port: 5044
+      targetPort: 5044
+    selector:
+      io.kompose.service: logstash
   status:
     loadBalancer: {}
 - apiVersion: v1
@@ -80,6 +139,7 @@ items:
   kind: Service
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -121,6 +181,7 @@ items:
   kind: Service
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -140,6 +201,7 @@ items:
   kind: Deployment
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -155,6 +217,7 @@ items:
     template:
       metadata:
         annotations:
+          collect_logs: "true"
           kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
           kompose.version: 1.21.0 (992df58d8)
         creationTimestamp: null
@@ -162,7 +225,12 @@ items:
           io.kompose.service: api-gateway
       spec:
         containers:
-        - image: api-gateway
+        - env:
+          - name: ISS_HOST
+            value: iss-service
+          - name: SUB_HOST
+            value: subscription-service
+          image: api-gateway
           imagePullPolicy: ""
           name: api-gateway
           ports:
@@ -171,6 +239,176 @@ items:
         restartPolicy: Always
         serviceAccountName: ""
         volumes: null
+  status: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: elasticsearch
+    name: elasticsearch
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: elasticsearch
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+          kompose.version: 1.21.0 (992df58d8)
+        creationTimestamp: null
+        labels:
+          io.kompose.service: elasticsearch
+      spec:
+        containers:
+        - env:
+          - name: ES_JAVA_OPTS
+            value: -Xms750m -Xmx750m
+          - name: bootstrap.memory_lock
+            value: "true"
+          - name: cluster.initial_master_nodes
+            value: elasticsearch
+          - name: cluster.name
+            value: docker-cluster
+          - name: discovery.seed_hosts
+            value: elasticsearch
+          - name: logger.level
+            value: info
+          - name: node.name
+            value: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+          imagePullPolicy: ""
+          name: elasticsearch
+          ports:
+          - containerPort: 9200
+          resources: {}
+          volumeMounts:
+          - mountPath: /usr/share/elasticsearch/data
+            name: elasticdata
+        restartPolicy: Always
+        serviceAccountName: ""
+        volumes:
+        - name: elasticdata
+          persistentVolumeClaim:
+            claimName: elasticdata
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: elasticdata
+    name: elasticdata
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: filebeat
+    name: filebeat
+  spec:
+    containers:
+    - image: docker.elastic.co/beats/filebeat:7.1.1
+      name: filebeat
+      resources: {}
+      volumeMounts:
+      - mountPath: /usr/share/filebeat/filebeat.yml
+        name: filebeat-claim0
+        readOnly: true
+      - mountPath: /var/lib/docker/containers
+        name: filebeat-claim1
+        readOnly: true
+      - mountPath: /var/run/docker.sock
+        name: filebeat-claim2
+        readOnly: true
+      - mountPath: /usr/share/filebeat/data
+        name: filebeatdata
+    restartPolicy: OnFailure
+    volumes:
+    - name: filebeat-claim0
+      persistentVolumeClaim:
+        claimName: filebeat-claim0
+        readOnly: true
+    - name: filebeat-claim1
+      persistentVolumeClaim:
+        claimName: filebeat-claim1
+        readOnly: true
+    - name: filebeat-claim2
+      persistentVolumeClaim:
+        claimName: filebeat-claim2
+        readOnly: true
+    - name: filebeatdata
+      persistentVolumeClaim:
+        claimName: filebeatdata
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: filebeat-claim0
+    name: filebeat-claim0
+  spec:
+    accessModes:
+    - ReadOnlyMany
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: filebeat-claim1
+    name: filebeat-claim1
+  spec:
+    accessModes:
+    - ReadOnlyMany
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: filebeat-claim2
+    name: filebeat-claim2
+  spec:
+    accessModes:
+    - ReadOnlyMany
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: filebeatdata
+    name: filebeatdata
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
   status: {}
 - apiVersion: apps/v1
   kind: Deployment
@@ -214,6 +452,7 @@ items:
   kind: Deployment
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -229,6 +468,7 @@ items:
     template:
       metadata:
         annotations:
+          collect_logs: "true"
           kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
           kompose.version: 1.21.0 (992df58d8)
         creationTimestamp: null
@@ -236,7 +476,12 @@ items:
           io.kompose.service: iss-service
       spec:
         containers:
-        - image: iss-service
+        - env:
+          - name: AMQP_HOST
+            value: rabbitmq-server
+          - name: HOST
+            value: iss-service
+          image: iss-service
           imagePullPolicy: ""
           name: iss-service
           ports:
@@ -245,6 +490,105 @@ items:
         restartPolicy: Always
         serviceAccountName: ""
         volumes: null
+  status: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: kibana
+    name: kibana
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: kibana
+    strategy: {}
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+          kompose.version: 1.21.0 (992df58d8)
+        creationTimestamp: null
+        labels:
+          io.kompose.service: kibana
+      spec:
+        containers:
+        - env:
+          - name: ELASTICSEARCH_URL
+            value: http://elasticsearch:9200
+          image: docker.elastic.co/kibana/kibana:7.1.1
+          imagePullPolicy: ""
+          name: kibana
+          ports:
+          - containerPort: 5601
+          resources: {}
+        restartPolicy: Always
+        serviceAccountName: ""
+        volumes: null
+  status: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: logstash
+    name: logstash
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: logstash
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
+          kompose.version: 1.21.0 (992df58d8)
+        creationTimestamp: null
+        labels:
+          io.kompose.service: logstash
+      spec:
+        containers:
+        - env:
+          - name: path.config
+            value: /usr/share/logstash/pipeline
+          image: logstash
+          imagePullPolicy: ""
+          name: logstash
+          ports:
+          - containerPort: 5044
+          resources: {}
+          volumeMounts:
+          - mountPath: /usr/share/logstash/pipeline
+            name: logstash-claim0
+        restartPolicy: Always
+        serviceAccountName: ""
+        volumes:
+        - name: logstash-claim0
+          persistentVolumeClaim:
+            claimName: logstash-claim0
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: logstash-claim0
+    name: logstash-claim0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
   status: {}
 - apiVersion: apps/v1
   kind: Deployment
@@ -281,21 +625,21 @@ items:
           resources: {}
           volumeMounts:
           - mountPath: /data/db
-            name: mongo-claim0
+            name: mongodata
         restartPolicy: Always
         serviceAccountName: ""
         volumes:
-        - name: mongo-claim0
+        - name: mongodata
           persistentVolumeClaim:
-            claimName: mongo-claim0
+            claimName: mongodata
   status: {}
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     creationTimestamp: null
     labels:
-      io.kompose.service: mongo-claim0
-    name: mongo-claim0
+      io.kompose.service: mongodata
+    name: mongodata
   spec:
     accessModes:
     - ReadWriteOnce
@@ -307,6 +651,7 @@ items:
   kind: Deployment
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -322,6 +667,7 @@ items:
     template:
       metadata:
         annotations:
+          collect_logs: "true"
           kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
           kompose.version: 1.21.0 (992df58d8)
         creationTimestamp: null
@@ -329,7 +675,10 @@ items:
           io.kompose.service: notification-service
       spec:
         containers:
-        - image: notification-service
+        - env:
+          - name: AMQP_HOST
+            value: rabbitmq-server
+          image: notification-service
           imagePullPolicy: ""
           name: notification-service
           ports:
@@ -381,6 +730,7 @@ items:
   kind: Deployment
   metadata:
     annotations:
+      collect_logs: "true"
       kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
       kompose.version: 1.21.0 (992df58d8)
     creationTimestamp: null
@@ -396,6 +746,7 @@ items:
     template:
       metadata:
         annotations:
+          collect_logs: "true"
           kompose.cmd: kompose convert -f docker-compose.yml -o simple.yml
           kompose.version: 1.21.0 (992df58d8)
         creationTimestamp: null
@@ -404,8 +755,14 @@ items:
       spec:
         containers:
         - env:
+          - name: AMQP_HOST
+            value: rabbitmq-server
+          - name: HOST
+            value: subscription-service
           - name: MONGO_DB_URI
             value: mongodb://mongo:27017/subscription-service
+          - name: SCHEDULE
+            value: '* * * * *'
           image: subscription-service
           imagePullPolicy: ""
           name: subscription-service
