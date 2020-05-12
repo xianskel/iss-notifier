@@ -13,6 +13,7 @@
   "author": "Cian Skelly <>",
   "dependencies": {
     "amqplib-plus": "^1.0.3",
+    "moment": "^2.25.3",
     "nodemailer": "^6.4.6",
     "winston": "^3.2.1"
   },

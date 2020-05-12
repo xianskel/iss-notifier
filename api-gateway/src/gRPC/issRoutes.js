@@ -21,7 +21,6 @@ export const getLocationData = (req, res) => {
   const correlationId = req.headers["X-Correlation-ID"];
   let metadata = new grpc.Metadata();
   metadata.add("correlationId", correlationId);
-  service.metadata = metadata;
 
   service.getLocationData({ lat, lon }, metadata, (err, result) => {
     if (err) {

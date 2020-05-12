@@ -11,7 +11,10 @@ export class SubscriptionService {
         lat: message.lat,
         lon: message.lon,
       });
-      this.amqpConnection.publish({ email: message.email, data: "info" });
+      this.amqpConnection.publish({
+        email: message.email,
+        data: info.data.response,
+      });
     } catch (e) {
       logger.error("An error occured fetching ISS info: " + e);
     }

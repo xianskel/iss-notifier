@@ -18,7 +18,6 @@ export const createSubscription = (req, res) => {
   const correlationId = req.headers["X-Correlation-ID"];
   let metadata = new grpc.Metadata();
   metadata.add("correlationId", correlationId);
-  service.metadata = metadata;
 
   client.createSubscription({ ...req.body }, metadata, (err, result) => {
     if (err) {
@@ -28,7 +27,7 @@ export const createSubscription = (req, res) => {
       });
       res.status(500).json("An error occured!");
     } else {
-      logger.info("Succesfully retrieved subscription", {
+      logger.info("Succesfully created subscription", {
         correlationId: req.headers["X-Correlation-ID"],
       });
       res.json(result);
@@ -40,7 +39,6 @@ export const deleteSubscription = (req, res) => {
   const correlationId = req.headers["X-Correlation-ID"];
   let metadata = new grpc.Metadata();
   metadata.add("correlationId", correlationId);
-  service.metadata = metadata;
 
   client.deleteSubscription(req.body, metadata, (err, result) => {
     if (err) {

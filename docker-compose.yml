@@ -39,7 +39,7 @@ services:
     environment:
       - MONGO_DB_URI=mongodb://mongo:27017/subscription-service 
       - AMQP_HOST=rabbitmq-server
-      - SCHEDULE='* /5 * * *'
+      - SCHEDULE=* * * * *
       - HOST=subscription-service
     labels:
       collect_logs: "true"
