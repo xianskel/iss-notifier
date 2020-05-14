@@ -24,13 +24,14 @@ export const createSubscription = (call, callback) => {
 
 export const deleteSubscription = (call, callback) => {
   const body = call.request;
+  const correlationId = call.metadata.get("correlationId");
 
   if (!body || !body.email) {
     logger.error("Invalid deletion request");
     return callback(new Error("You must provide a email."));
   }
 
-  logger.info("Deleting subscription: " + JSON.stringify(sub), {
+  logger.info("Deleting subscription: " + JSON.stringify(body.email), {
     correlationId,
   });
   Subscription.deleteOne(body)
